@@ -1,0 +1,60 @@
+:root {
+  /* Corporate Light Theme (Sungrow Inspired) */
+  --primary-color: #0052cc;
+  /* Professional Blue */
+  --primary-hover: #003d99;
+  --secondary-color: #f4f5f7;
+  /* Light Gray Background */
+  --accent-color: #ffab00;
+  /* Warm Accent */
+
+  --bg-color: #f4f6f8;
+  /* Page Background */
+  --bg-card: #ffffff;
+  /* Card Background */
+  --text-primary: #172b4d;
+  /* Dark Slate */
+  --text-secondary: #5e6c84;
+  /* Medium Gray */
+
+  --border-color: #dfe1e6;
+  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+  --glass-effect: none;
+  /* Removing glassmorphism for flat corporate look */
+
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  color: #ffffff;
+  /* Changed to white for contrast */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 82, 204, 0.4);
+  /* Adjusted shadow color to match new primary */
+}
