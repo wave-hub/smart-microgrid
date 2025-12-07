@@ -6,16 +6,16 @@ export const products = {
     ],
     inverters: [
         // String Inverters for C&I
-        { id: 'inv-s100', name: 'Sungrow SG110CX (100kW)', type: 'String', capacityKw: 100, price: 25000, specs: { mppt: 9, eff: '98.7%' }, image: '/inverter_string.png' },
-        { id: 'inv-s50', name: 'Huawei SUN2000-50KTL', type: 'String', capacityKw: 50, price: 15000, specs: { mppt: 6, eff: '98.5%' }, image: '/inverter_string_small.png' },
+        { id: 'inv-s100', name: 'Sungrow SG110CX (100kW)', type: 'String', capacityKw: 100, price: 25000, specs: { mppt: 9, eff: '98.7%' }, image: '/inverter_string.png', compatibility: { battery: 'HV_Cabinet' } },
+        { id: 'inv-s50', name: 'Huawei SUN2000-50KTL', type: 'String', capacityKw: 50, price: 15000, specs: { mppt: 6, eff: '98.5%' }, image: '/inverter_string_small.png', compatibility: { battery: 'HV_Cabinet' } },
         // Hybrid Inverters for Residential/ESS
-        { id: 'inv-h10', name: 'Sungrow SH10RT (10kW)', type: 'Hybrid', capacityKw: 10, price: 8000, specs: { batteryV: '150-600V', phase: '3P' }, image: '/inverter_hybrid.png' },
-        { id: 'inv-h5', name: 'GoodWe ET 5kW', type: 'Hybrid', capacityKw: 5, price: 5000, specs: { batteryV: 'High Voltage', phase: '3P' }, image: '/inverter_small.png' }
+        { id: 'inv-h10', name: 'Sungrow SH10RT (10kW)', type: 'Hybrid', capacityKw: 10, price: 8000, specs: { batteryV: '150-600V', phase: '3P' }, image: '/inverter_hybrid.png', compatibility: { battery: 'HV_Stack' } },
+        { id: 'inv-h5', name: 'GoodWe ET 5kW', type: 'Hybrid', capacityKw: 5, price: 5000, specs: { batteryV: 'High Voltage', phase: '3P' }, image: '/inverter_small.png', compatibility: { battery: 'HV_Stack' } }
     ],
     batteries: [
-        { id: 'bat-delta-home', name: 'Delta Home Spirit V2 (Stack)', type: 'Stack', capacityKwh: 10, price: 15000, specs: { life: '10 Years', tech: 'LFP' }, image: '/battery_residential.png' },
-        { id: 'bat-delta-ci', name: 'Delta C&I Energy Bank', type: 'Cabinet', capacityKwh: 100, price: 85000, specs: { cooling: 'Liquid', ip: 'IP65' }, image: '/battery_commercial.png' },
-        { id: 'bat-cnt-2mwh', name: 'EnerGiga 2MWh Container', type: 'Container', capacityKwh: 2000, price: 1200000, specs: { cooling: 'Liquid', life: '15 Years' }, image: '/battery_container.png' }
+        { id: 'bat-delta-home', name: 'Delta Home Spirit V2 (Stack)', type: 'Stack', capacityKwh: 10, price: 15000, specs: { life: '10 Years', tech: 'LFP' }, image: '/battery_residential.png', compatibility: { type: 'HV_Stack' } },
+        { id: 'bat-delta-ci', name: 'Delta C&I Energy Bank', type: 'Cabinet', capacityKwh: 100, price: 85000, specs: { cooling: 'Liquid', ip: 'IP65' }, image: '/battery_commercial.png', compatibility: { type: 'HV_Cabinet' } },
+        { id: 'bat-cnt-2mwh', name: 'EnerGiga 2MWh Container', type: 'Container', capacityKwh: 2000, price: 1200000, specs: { cooling: 'Liquid', life: '15 Years' }, image: '/battery_container.png', compatibility: { type: 'Container' } }
     ],
     diesel_generators: [
         { id: 'dg-50', name: 'Cummins 50kW Silent Gen', powerKw: 50, price: 30000, specs: { fuel: 'Diesel', tank: '200L' } },
@@ -93,15 +93,29 @@ export const recommendProducts = (inputs) => {
         }
     }
 
-    // Battery Selection
+    // Battery Selection with Compatibility Check
     if (batteryKwh > 0 && scenarioId !== 'foldable_pv' && scenarioId !== 'mobile_ess') {
-        if (scenarioId === 'residential') {
-            res.battery = products.batteries.find(b => b.id === 'bat-delta-home') || products.batteries[0];
-        } else if (batteryKwh > 1000) {
-            res.battery = products.batteries.find(b => b.type === 'Container');
-        } else {
-            // Prefer Delta C&I Energy Bank for commercial
-            res.battery = products.batteries.find(b => b.id === 'bat-delta-ci') || products.batteries[1];
+        const requiredType = res.inverter?.compatibility?.battery;
+
+        if (requiredType) {
+            // Strict matching if inverter has requirements
+            res.battery = products.batteries.find(b => b.compatibility?.type === requiredType);
+            // Fallback strategy if capacity mismatch (simplified)
+            if (!res.battery) {
+                // Try find any matching type
+                res.battery = products.batteries.find(b => b.compatibility?.type === requiredType);
+            }
+        }
+
+        // Default Logic if no specific Requirement or fallback
+        if (!res.battery) {
+            if (scenarioId === 'residential') {
+                res.battery = products.batteries.find(b => b.id === 'bat-delta-home') || products.batteries[0];
+            } else if (batteryKwh > 1000) {
+                res.battery = products.batteries.find(b => b.type === 'Container');
+            } else {
+                res.battery = products.batteries.find(b => b.id === 'bat-delta-ci') || products.batteries[1];
+            }
         }
     }
 

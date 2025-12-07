@@ -114,15 +114,93 @@ export const calculateSystem = (inputs) => {
         reqDieselKw = peakLoad * 1.2;
     }
 
+    // Charts generation (Realistic Load Profiles)
+    const hourlyData = [];
+    let totalLoadKwh = 0;
+
+    // Helper: Generate curve based on hour
+    const getHourLoad = (h, type) => {
+        let factor = 0.0;
+        if (type === 'residential') {
+            // Dual Peak: 7-9am, 18-22pm
+            if (h >= 6 && h <= 9) factor = 0.6; // Morning
+            else if (h >= 17 && h <= 22) factor = 0.9; // Evening
+            else if (h >= 10 && h <= 16) factor = 0.2; // Day (school/work)
+            else factor = 0.1; // Night
+        } else {
+            // C&I: Works 8am - 6pm
+            if (h >= 8 && h <= 18) factor = 0.85; // Work time
+            else factor = 0.15; // Standby
+        }
+        // Add some random noise +/- 10%
+        return factor * (0.9 + Math.random() * 0.2);
+    };
+
+    // Calculate Financials - TOU Rates (California style)
+    const RATE_PEAK = 0.45; // $/kWh (16:00 - 21:00)
+    const RATE_OFF_PEAK = 0.15; // $/kWh
+    let costWithoutSystem = 0;
+    let costWithSystem = 0;
+
+    for (let i = 0; i < 24; i++) {
+        // 1. Load Calculation
+        const isPeakHour = (i >= 16 && i <= 21);
+        const currentRate = isPeakHour ? RATE_PEAK : RATE_OFF_PEAK;
+
+        let loadFactor = getHourLoad(i, scenarioId.includes('ci') || scenarioId === 'microgrid_on' ? 'ci' : 'residential');
+        // Normalize to daily consumption
+        // Simplification: We scale this factor later or just use peakLoad as reference max
+        let currentLoadKw = peakLoad * loadFactor;
+
+        // 2. Solar Generation (Bell curve 6am - 6pm)
+        let solarGenKw = 0;
+        if (i >= 6 && i <= 18) {
+            const sunPos = (i - 6) / 12; // 0 to 1
+            solarGenKw = reqPVKw * Math.sin(sunPos * Math.PI) * 0.8; // Peak at noon
+        }
+
+        // 3. Grid Interaction
+        let netLoadKw = currentLoadKw - solarGenKw;
+
+        // Battery Logic (Simple Arbitrage)
+        // Charge during off-peak (if solar excess or grid), Discharge during peak
+        let batteryActionKw = 0; // +Charge, -Discharge
+
+        if (reqBatKwh > 0) {
+            if (isPeakHour) {
+                // Peak: Discharge to cover load
+                if (netLoadKw > 0) {
+                    batteryActionKw = -Math.min(netLoadKw, reqBatKwh * 0.5); // Max 0.5C rate
+                }
+            } else if (i >= 10 && i <= 15) {
+                // Mid-day: Charge from Solar Excess
+                if (netLoadKw < 0) { // Solar > Load
+                    batteryActionKw = Math.min(Math.abs(netLoadKw), reqBatKwh * 0.5);
+                }
+            }
+        }
+
+        // Final Grid Import
+        let gridImportKw = Math.max(0, netLoadKw + batteryActionKw);
+
+        // Financial Accumulation (Daily)
+        costWithoutSystem += currentLoadKw * currentRate;
+        costWithSystem += gridImportKw * currentRate;
+
+        hourlyData.push({
+            name: `${i}:00`,
+            load: parseFloat(currentLoadKw.toFixed(2)),
+            solar: parseFloat(solarGenKw.toFixed(2)),
+            grid: parseFloat(gridImportKw.toFixed(2))
+        });
+    }
+
     // Financials (Simplified for V7 demo)
     const totalCapex = (reqPVKw * 3000) + (reqBatKwh * 1200) + (reqInvKw * 600);
-    const savings = reqPVKw * effectiveSunHours * 365 * 0.8;
-
-    // Charts generation (Shared logic, simplified)
-    const hourlyData = [];
-    for (let i = 0; i < 24; i++) {
-        hourlyData.push({ name: `${i}:00`, load: Math.random() * peakLoad, solar: (i > 6 && i < 18) ? reqPVKw * 0.6 : 0 });
-    }
+    // Savings = Cost avoided * 365
+    // Note: This replaces the old simple savings formula
+    const dailySaving = costWithoutSystem - costWithSystem;
+    const annualSavings = dailySaving * 365;
 
     return {
         scenarioId,
@@ -133,9 +211,9 @@ export const calculateSystem = (inputs) => {
         evStats,
         financials: {
             capex: totalCapex.toFixed(0),
-            annualSavings: savings.toFixed(0),
-            paybackYears: (totalCapex / (savings + 1)).toFixed(1), // prevent div/0
-            roi: '15.5'
+            annualSavings: annualSavings.toFixed(0),
+            paybackYears: annualSavings > 0 ? (totalCapex / annualSavings).toFixed(1) : '99',
+            roi: annualSavings > 0 ? ((annualSavings / totalCapex) * 100).toFixed(1) : '0'
         },
         charts: { hourly: hourlyData, yearly: [] }
     };
