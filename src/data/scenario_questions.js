@@ -1,126 +1,140 @@
 export const scenarios = [
-    { id: 'residential', nameCN: '户用光储系统', nameEN: 'Residential PV & ESS', detailed: false },
-    { id: 'ci_pv', nameCN: '工商业光伏系统', nameEN: 'C&I PV Only', detailed: true },
-    { id: 'ci_ess', nameCN: '工商业储能系统', nameEN: 'C&I ESS Only', detailed: true },
-    { id: 'ci_hybrid', nameCN: '工商业光储系统', nameEN: 'C&I PV & ESS', detailed: true },
-    { id: 'microgrid_on', nameCN: '并网微电网', nameEN: 'On-grid Microgrid', detailed: true },
-    { id: 'microgrid_off', nameCN: '离网微电网', nameEN: 'Off-grid Microgrid', detailed: true },
-    { id: 'ev_station', nameCN: '充电桩系统', nameEN: 'EV Charging Station', detailed: true },
-    { id: 'foldable_pv', nameCN: '折叠光伏集装箱', nameEN: 'Foldable PV Container', detailed: true },
-    { id: 'mobile_ess', nameCN: '移动储能车', nameEN: 'Mobile ESS Vehicle', detailed: true },
-    { id: 'service_area', nameCN: '高速服务区/加油站', nameEN: 'Service Area / Gas Station', detailed: true }
+    { id: 'residential', nameCN: '户用光储系统', nameEN: 'Residential PV & ESS', type: 'Residential' },
+    { id: 'commercial_pv', nameCN: '工商业光伏 (自发自用)', nameEN: 'C&I PV (Self-Consumption)', type: 'C&I' },
+    { id: 'commercial_ess', nameCN: '工商业储能 (峰谷套利)', nameEN: 'C&I ESS (Arbitrage)', type: 'C&I' },
+    { id: 'microgrid', nameCN: '微电网 (离网/保电)', nameEN: 'Microgrid (Backup/Island)', type: 'Microgrid' },
+    { id: 'ev_station', nameCN: '光储充一体化', nameEN: 'PV + Charging Station', type: 'EV' },
+    { id: 'mobile_ess', nameCN: '移动储能/应急保电', nameEN: 'Mobile ESS / Emergency', type: 'Mobile' }
+];
+
+export const commonFields = [
+    {
+        id: 'project_info',
+        textCN: '项目基础信息',
+        textEN: 'Project Basics',
+        fields: [
+            { id: 'project_phase', labelCN: '项目阶段', labelEN: 'Project Phase', type: 'select', options: ['Feasibility (可研)', 'Concept Design (方案设计)', 'Bidding (招投标)', 'Construction (施工图)', 'Expansion (扩建)'] },
+            { id: 'construction_type', labelCN: '建设类型', labelEN: 'Construction Type', type: 'select', options: ['Concrete Roof (混凝土屋顶)', 'Steel Roof (彩钢瓦)', 'Ground/Land (地面)', 'Island (海岛)', 'Remote Area (偏远地区)', 'Data Center (数据中心)', 'Mining Site (矿区)'] }
+        ]
+    },
+    {
+        id: 'elec_info',
+        textCN: '电气接入信息',
+        textEN: 'Electrical Info',
+        fields: [
+            { id: 'grid_voltage', labelCN: '并网电压等级', labelEN: 'Grid Voltage', type: 'select', options: ['380V/400V (Lv)', '10kV (Hv)', '33kV (Hv)', '35kV (Hv)'] },
+            { id: 'transformer_cap', labelCN: '变压器容量', labelEN: 'Transformer Cap', type: 'number', unit: 'kVA' }
+        ]
+    }
 ];
 
 export const scenarioQuestions = {
     residential: [
         {
-            id: 'res_basics',
-            textCN: '住宅基础信息',
-            textEN: 'Residential Basics',
+            id: 'res_spec',
+            textCN: '户用场景参数',
+            textEN: 'Residential Specs',
             fields: [
+                { id: 'grid_type', labelCN: '此项目是?', labelEN: 'Grid Connection', type: 'select', options: ['Hybrid (并离网/储能)', 'Grid-Tied (纯并网/无储能)', 'Off-Grid (纯离网)'] },
                 { id: 'roof_type', labelCN: '屋顶类型', labelEN: 'Roof Type', type: 'select', options: ['Flat (平顶)', 'Pitched (斜顶)'] },
+                { id: 'roof_area', labelCN: '可用屋顶面积', labelEN: 'Roof Area', type: 'number', unit: 'm²' },
                 { id: 'phase_type', labelCN: '电网相数', labelEN: 'Grid Phase', type: 'select', options: ['Single-Phase (单相)', 'Three-Phase (三相)'] }
             ]
         }
     ],
-    service_area: [
+    commercial_pv: [
         {
-            id: 'service_demand',
-            textCN: '服务区需求',
-            textEN: 'Service Area Needs',
+            id: 'pv_spec',
+            textCN: '光伏消纳参数',
+            textEN: 'PV Specs',
             fields: [
-                { id: 'daily_traffic', labelCN: '日车流量', labelEN: 'Daily Traffic', type: 'number', unit: 'cars' },
-                { id: 'charger_count', labelCN: '充电桩数量', labelEN: 'Charger Count', type: 'number', unit: 'units' },
-                { id: 'grid_voltage', labelCN: '并网电压等级', labelEN: 'Grid Voltage', type: 'select', options: ['400V', '10kV', '35kV'] }
+                { id: 'roof_area', labelCN: '可用屋顶面积', labelEN: 'Roof Area', type: 'number', unit: 'm²' },
+                { id: 'self_use_ratio', labelCN: '预期自用比例', labelEN: 'Self-use Ratio', type: 'number', unit: '%' }
             ]
         }
     ],
-    foldable_pv: [
+    commercial_ess: [
         {
-            id: 'deployment',
-            textCN: '部署环境',
-            textEN: 'Deployment Env',
+            id: 'ess_arbitrage',
+            textCN: '峰谷套利参数 (ROI)',
+            textEN: 'Arbitrage Params',
             fields: [
-                { id: 'terrain', labelCN: '地面情况', labelEN: 'Terrain', type: 'select', options: ['Concete (硬化)', 'Grass/Dirt (土路)', 'Uneven (崎岖)'] },
-                { id: 'deploy_time', labelCN: '部署时间限制', labelEN: 'Max Setup Time', type: 'select', options: ['< 30 mins', '< 2 hours', 'No Limit'] }
+                { id: 'price_peak', labelCN: '峰段电价', labelEN: 'Peak Price', type: 'number', unit: '$/kWh' },
+                { id: 'price_valley', labelCN: '谷段电价', labelEN: 'Valley Price', type: 'number', unit: '$/kWh' },
+                { id: 'discharge_cycles', labelCN: '每日循环次数', labelEN: 'Daily Cycles', type: 'select', options: ['1 Cycle', '2 Cycles'] }
+            ]
+        },
+        // Reuse Load Profile for proper sizing
+        {
+            id: 'micro_load',
+            textCN: '负荷详情 (Load Profile)',
+            textEN: 'Load Details',
+            fields: [
+                { id: 'monthly_avg_kwh', labelCN: '月均用电量', labelEN: 'Monthly kWh', type: 'number', unit: 'kWh' },
+                { id: 'peak_load_kw', labelCN: '峰值功率', labelEN: 'Peak Load', type: 'number', unit: 'kW' },
+                { id: 'transformer_cap', labelCN: '变压器容量', labelEN: 'Transformer Cap', type: 'number', unit: 'kVA' }
+            ]
+        },
+        // Optional: Add Roof Info if they want PV
+        {
+            id: 'pv_spec',
+            textCN: '光伏安装条件 (Optional)',
+            textEN: 'PV Specs (Optional)',
+            fields: [
+                { id: 'roof_area', labelCN: '可用屋顶面积', labelEN: 'Roof Area', type: 'number', unit: 'm²' }
             ]
         }
     ],
-    mobile_ess: [
+    microgrid: [
         {
-            id: 'mobility',
-            textCN: '移动需求',
-            textEN: 'Mobility Needs',
+            id: 'micro_grid_status',
+            textCN: '微网现状 (Grid Status)',
+            textEN: 'Grid Status',
             fields: [
-                { id: 'vehicle_type', labelCN: '载具类型', labelEN: 'Vehicle Type', type: 'select', options: ['Integrated Truck (一体车)', 'Trailer (拖车)', 'Skid (撬装)'] },
-                { id: 'event_duration', labelCN: '单次任务时长', labelEN: 'Event Duration', type: 'number', unit: 'hours' }
+                { id: 'grid_type', labelCN: '并网类型', labelEN: 'Conn. Type', type: 'select', options: ['Off-grid (无电网)', 'Weak-grid (弱电网)', 'Grid-tied (市电接入)'] },
+                { id: 'future_grid', labelCN: '后期接入市电?', labelEN: 'Future Grid?', type: 'select', options: ['No', 'Yes'] }
             ]
-        }
-    ],
-    ci_pv: [
+        },
         {
-            id: 'grid_conn',
-            textCN: '并网信息',
-            textEN: 'Grid Connection',
+            id: 'micro_load',
+            textCN: '负荷详情 (Load Profile)',
+            textEN: 'Load Details',
             fields: [
-                { id: 'transformer_cap', labelCN: '变压器容量', labelEN: 'Transformer Cap', type: 'number', unit: 'kVA' },
-                { id: 'self_use_ratio', labelCN: '自发自用比例', labelEN: 'Self-use Ratio', type: 'number', unit: '%' }
+                { id: 'monthly_avg_kwh', labelCN: '月均用电量', labelEN: 'Monthly kWh', type: 'number', unit: 'kWh' },
+                { id: 'peak_load_kw', labelCN: '峰值功率', labelEN: 'Peak Load', type: 'number', unit: 'kW' },
+                { id: 'peak_time', labelCN: '峰值时间段', labelEN: 'Peak Time', type: 'text', placeholder: 'e.g. 12:00-14:00' }
             ]
-        }
-    ],
-    ci_ess: [
+        },
         {
-            id: 'arbitrage',
-            textCN: '峰谷套利分析',
-            textEN: 'Arbitrage Analysis',
+            id: 'micro_genset',
+            textCN: '柴发配置 (Genset)',
+            textEN: 'Generator Info',
             fields: [
-                { id: 'peak_load_time', labelCN: '峰值负荷时段', labelEN: 'Peak Load Time', type: 'select', options: ['Morning', 'Afternoon', 'Evening'] },
-                { id: 'discharge_depth', labelCN: '放电深度 (DOD)', labelEN: 'DOD Target', type: 'number', unit: '%' }
-            ]
-        }
-    ],
-    ci_hybrid: [
-        {
-            id: 'hybrid_req',
-            textCN: '光储需求',
-            textEN: 'Hybrid Requirements',
-            fields: [
-                { id: 'backup_load', labelCN: '备用负荷', labelEN: 'Backup Load', type: 'number', unit: 'kW' },
-                { id: 'autonomy_hours', labelCN: '备电时长', labelEN: 'Autonomy Hours', type: 'number', unit: 'h' }
-            ]
-        }
-    ],
-    microgrid_on: [
-        {
-            id: 'pcc_limits',
-            textCN: 'PCC点限制',
-            textEN: 'PCC Constraints',
-            fields: [
-                { id: 'zero_export', labelCN: '防逆流要求', labelEN: 'Zero Export', type: 'checkbox' },
-                { id: 'max_grid_import', labelCN: '最大取电功率', labelEN: 'Max Grid Import', type: 'number', unit: 'kW' }
-            ]
-        }
-    ],
-    microgrid_off: [
-        {
-            id: 'genset',
-            textCN: '柴发配置',
-            textEN: 'Generator Config',
-            fields: [
-                { id: 'existing_gen', labelCN: '已有柴发容量', labelEN: 'Existing Gen', type: 'number', unit: 'kW' },
-                { id: 'fuel_tank', labelCN: '油箱容量', labelEN: 'Fuel Tank', type: 'number', unit: 'L' }
+                { id: 'existing_genset_cap', labelCN: '已有柴发容量', labelEN: 'Existing Gen', type: 'number', unit: 'kVA' },
+                { id: 'genset_count', labelCN: '柴发台数', labelEN: 'Gen Count', type: 'number', unit: 'units' }
             ]
         }
     ],
     ev_station: [
         {
-            id: 'ev_config',
-            textCN: '充电站配置',
-            textEN: 'Station Config',
+            id: 'ev_spec',
+            textCN: '充电站参数',
+            textEN: 'EV Station Specs',
             fields: [
                 { id: 'charger_count', labelCN: '充电桩数量', labelEN: 'Charger Count', type: 'number', unit: 'units' },
-                { id: 'avg_power', labelCN: '单桩平均功率', labelEN: 'Avg Power/Pile', type: 'number', unit: 'kW' },
-                { id: 'simultaneity', labelCN: '同时使用系数', labelEN: 'Simultaneity', type: 'number', unit: '0-1' }
+                { id: 'daily_cars', labelCN: '日均车流量', labelEN: 'Daily Traffic', type: 'number', unit: 'cars' },
+                { id: 'avg_charge_duration', labelCN: '平均充电时长', labelEN: 'Avg Duration', type: 'number', unit: 'h' }
+            ]
+        }
+    ],
+    mobile_ess: [
+        {
+            id: 'mobile_spec',
+            textCN: '移动储能参数',
+            textEN: 'Mobile Specs',
+            fields: [
+                { id: 'vehicle_type', labelCN: '载具类型', labelEN: 'Vehicle Type', type: 'select', options: ['Integrated Truck (一体车)', 'Trailer (拖车)', 'Skid (撬装)'] },
+                { id: 'application', labelCN: '主要用途', labelEN: 'Application', type: 'select', options: ['Emergency (应急)', 'Event (活动)', 'Construction (施工)'] }
             ]
         }
     ]

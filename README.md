@@ -6,7 +6,7 @@ A powerful, interactive web application for configuring and visualizing smart mi
 
 - **Scenario-Based Configuration**: Tailored flows for Service Areas, Residential, C&I, and more.
 - **Dynamic Topology**: Real-time visualization of system architecture including PV, Storage, Grid, and Loads.
-- **Product Selection**: Integrated catalog of Delta Microgrid products (Inverters, Batteries, EV Chargers).
+- **Product Selection**: Integrated catalog of Smart Microgrid products (Inverters, Batteries, EV Chargers).
 - **Multi-Language Support**: Seamless switching between English and Chinese.
 - **Smart Calculations**: Automatic estimation of energy generation, savings, and ROI.
 

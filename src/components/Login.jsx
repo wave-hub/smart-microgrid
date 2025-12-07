@@ -12,7 +12,7 @@ const Login = ({ onLogin }) => {
         e.preventDefault();
         // Simple "frontend" password check
         // In a real app, this would check against a backend
-        if (password === 'admin123' || password === 'delta2024') {
+        if (password === 'admin123' || password === 'smart2024') {
             onLogin();
         } else {
             setError(true);
@@ -31,7 +31,7 @@ const Login = ({ onLogin }) => {
                     <div className="icon-circle">
                         <Lock size={24} color="#0052cc" />
                     </div>
-                    <h1>Delta Microgrid</h1>
+                    <h1>Smart Microgrid Configurator</h1>
                     <p>Sign in to access configurator</p>
                 </div>
 

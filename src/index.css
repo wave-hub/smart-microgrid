@@ -1,60 +1,431 @@
 :root {
-  /* Corporate Light Theme (Sungrow Inspired) */
-  --primary-color: #0052cc;
-  /* Professional Blue */
-  --primary-hover: #003d99;
-  --secondary-color: #f4f5f7;
-  /* Light Gray Background */
-  --accent-color: #ffab00;
-  /* Warm Accent */
+  /* Commercial Tech Theme (Deep Blue & Emerald) */
+  --primary-color: #0f172a;
+  /* Slate 900 */
+  --primary-light: #334155;
+  /* Slate 700 */
+  --accent-color: #10b981;
+  /* Emerald 500 */
+  --accent-glow: rgba(16, 185, 129, 0.4);
 
-  --bg-color: #f4f6f8;
-  /* Page Background */
+  --bg-color: #f8fafc;
+  /* Slate 50 */
   --bg-card: #ffffff;
-  /* Card Background */
-  --text-primary: #172b4d;
-  /* Dark Slate */
-  --text-secondary: #5e6c84;
-  /* Medium Gray */
+  --text-primary: #1e293b;
+  /* Slate 800 */
+  --text-secondary: #64748b;
+  /* Slate 500 */
+  --text-value: #0f172a;
 
-  --border-color: #dfe1e6;
-  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
-  --glass-effect: none;
-  /* Removing glassmorphism for flat corporate look */
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 body {
   margin: 0;
-  font-family: var(--font-family);
+  font-family: var(--font-sans);
   background-color: var(--bg-color);
+  /* Premium Gradient Background */
+  background-image:
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(15, 23, 42, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
   color: var(--text-primary);
-  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-.app-container {
-  max-width: 1200px;
+/* Dashboard Layout */
+.dashboard-container {
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* ... (keep existing classes) ... */
+
+/* Card Styles */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  /* More transparent */
+  backdrop-filter: blur(12px);
+  /* Real glass effect */
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  /* Softer corners */
+  padding: 1.5rem;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  /* Inner border for shine */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.05),
+    0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* Typography */
+.metric-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-family: var(--font-sans);
+  /* Use sans for cleaner look, or mono for tech */
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-value);
+  line-height: 1.1;
+}
+
+.metric-unit {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-left: 0.25rem;
+}
+
+/* Specific Grid Areas */
+.col-span-3 {
+  grid-column: span 3;
+}
+
+.col-span-4 {
+  grid-column: span 4;
+}
+
+.col-span-6 {
+  grid-column: span 6;
+}
+
+.col-span-8 {
+  grid-column: span 8;
+}
+
+.col-span-9 {
+  grid-column: span 9;
+}
+
+.col-span-12 {
+  grid-column: span 12;
+}
+
+/* Product Cards */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.product-card {
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card.highlight {
+  border-color: var(--accent-color);
+}
+
+.product-card .tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  background-color: #f1f5f9;
+  color: #64748b;
 }
 
 .btn-primary {
-  background: var(--primary-color);
-  border: none;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  padding: 0.8rem 1.5rem;
-  color: #ffffff;
-  /* Changed to white for contrast */
-  font-weight: bold;
+  font-weight: 600;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  transition: all 0.2s;
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0, 82, 204, 0.4);
-  /* Adjusted shadow color to match new primary */
+  background-color: var(--primary-light);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* --- Utilities --- */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-baseline {
+  align-items: baseline;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.gap-6 {
+  gap: 1.5rem;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* Colors & Text */
+.text-slate-800 {
+  color: var(--text-primary);
+}
+
+.text-slate-700 {
+  color: #334155;
+}
+
+.text-slate-600 {
+  color: #475569;
+}
+
+.text-slate-500 {
+  color: var(--text-secondary);
+}
+
+.text-slate-400 {
+  color: #94a3b8;
+}
+
+.text-cyan-700 {
+  color: #0e7490;
+}
+
+.text-emerald-600 {
+  color: #059669;
+}
+
+.text-emerald-500 {
+  color: #10b981;
+}
+
+.text-amber-800 {
+  color: #92400e;
+}
+
+.text-amber-700 {
+  color: #b45309;
+}
+
+.bg-amber-50 {
+  background-color: #fffbeb;
+}
+
+.bg-yellow-100 {
+  background-color: #fef9c3;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe;
+}
+
+.bg-cyan-100 {
+  background-color: #cffafe;
+}
+
+.bg-purple-100 {
+  background-color: #f3e8ff;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.tracking-wider {
+  letter-spacing: 0.05em;
+}
+
+/* Borders */
+.border {
+  border-width: 1px;
+  border-style: solid;
+}
+
+.border-slate-100 {
+  border-color: #f1f5f9;
+}
+
+.border-amber-200 {
+  border-color: #fde68a;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.rounded-full {
+  border-radius: 9999px;
+}
+
+/* Spacing */
+.p-2 {
+  padding: 0.5rem;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
+}
+
+.mb-1 {
+  margin-bottom: 0.25rem;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+/* Specific Component Styles */
+.chart-container-large {
+  height: 350px;
+  width: 100%;
+}
+
+.warning-box {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.topology-wrapper {
+  height: 400px;
+  /* Fixed height for topology */
+  width: 100%;
+  position: relative;
 }

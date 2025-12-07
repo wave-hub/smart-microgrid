@@ -38,7 +38,15 @@ export const translations = {
             onGrid: "并网模式",
             roofArea: "可用屋顶面积 (m²)",
             hasEV: "是否有充电桩需求",
-            evLoad: "充电桩总功率 (kW)"
+            evLoad: "充电桩总功率 (kW)",
+            requirementsTitle: "方案设计所需资料",
+            reqList: [
+                "近12个月电费单 (Utility Bills)",
+                "厂区总平图 / 屋顶图纸 (Layout)",
+                "供配电系统一次图 (SLD)",
+                "变压器容量及负载信息",
+                "用电负荷数据 (15分钟间隔)"
+            ]
         },
         results: {
             header: "您的光伏储能投资方案",
@@ -68,7 +76,28 @@ export const translations = {
             },
             visuals: {
                 topology: "系统拓扑图",
-                render: "建设效果预览"
+                render: "建设效果预览",
+                archTitle: "系统架构",
+                archDesc: "基于当前配置的实时潮流仿真",
+                warnings: "系统预警",
+                nodes: {
+                    pv: "光伏阵列",
+                    grid: "电网",
+                    ess: "储能系统",
+                    gen: "柴油发电机",
+                    pcs: "变流器 / STS",
+                    load: "负载",
+                    connected: "已连接",
+                    disconnected: "断开连接"
+                }
+            },
+            bom: {
+                title: "系统配置清单 (BOM)",
+                viewSpecs: "查看规格"
+            },
+            export: {
+                pdf: "导出 PDF 报告",
+                doc: "生成正式方案 (Construction Scheme)"
             }
         }
     },
@@ -107,7 +136,15 @@ export const translations = {
             onGrid: "On-Grid",
             roofArea: "Roof Area (m²)",
             hasEV: "EV Charging Needs",
-            evLoad: "Total EV Power (kW)"
+            evLoad: "Total EV Power (kW)",
+            requirementsTitle: "Required Data for Proposal",
+            reqList: [
+                "12-Month Utility Bills",
+                "Site Layout / Roof Drawings",
+                "Single Line Diagram (SLD)",
+                "Transformer Capacity & Load Details",
+                "15-min Interval Load Data"
+            ]
         },
         results: {
             header: "Your Investment Proposal",
@@ -137,7 +174,28 @@ export const translations = {
             },
             visuals: {
                 topology: "System Topology",
-                render: "Project Preview"
+                render: "Project Preview",
+                archTitle: "System Architecture",
+                archDesc: "Real-time power flow simulation based on current configuration.",
+                warnings: "System Warnings",
+                nodes: {
+                    pv: "PV Array",
+                    grid: "Utility Grid",
+                    ess: "ESS",
+                    gen: "Generator",
+                    pcs: "PCS / STS",
+                    load: "Load",
+                    connected: "Connected",
+                    disconnected: "Disconnected"
+                }
+            },
+            bom: {
+                title: "Bill of Materials (BOM)",
+                viewSpecs: "View Specs"
+            },
+            export: {
+                pdf: "Export PDF",
+                doc: "View Formal Proposal"
             }
         }
     }

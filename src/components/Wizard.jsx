@@ -14,11 +14,23 @@ const Wizard = () => {
     const nextStep = () => setStep(s => s + 1);
 
     // New handler: accepts complete formData from InputForm
+    // New handler: accepts complete formData from InputForm
     const handleGenerate = (formData) => {
         const sysRequirements = calculateSystem(formData);
-        // Pass both calculated reqs AND original form data (for isMicrogrid, transformerCap)
-        const productRecs = recommendProducts({ ...sysRequirements, ...formData });
-        setResults({ reqs: sysRequirements, products: productRecs });
+
+        // Use the products selected by the calculator logic directly
+        // This ensures consistency between sizing (integer snapping) and product specs
+        const productRecs = sysRequirements.products || {};
+
+        // Include location in reqs for display
+        setResults({
+            reqs: {
+                ...sysRequirements,
+                location: formData.location,
+                targetMarket: formData.targetMarket || 'EU'
+            },
+            products: productRecs
+        });
         nextStep();
     };
 
