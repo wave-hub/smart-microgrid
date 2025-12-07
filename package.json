@@ -1,5 +1,6 @@
 {
-    "name": "pv-storage-configurator",
+    "name": "smart-microgrid-configurator",
+    "homepage": ".",
     "private": true,
     "version": "0.0.0",
     "type": "module",
