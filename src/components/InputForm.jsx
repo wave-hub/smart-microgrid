@@ -139,38 +139,67 @@ const InputForm = ({ onGenerate }) => {
                 </div>
 
                 {/* 2. Basic Project Info (Common Fields) - REMOVED per user request */}
-                {/* 2. Basic Project Info (Common Fields) - REMOVED per user request */}
                 {/* {commonFields.map(group => renderFields(group))} */}
 
                 {/* 2.5 New: Load Details Section (Added as per user request) */}
                 <div className="form-section" style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', marginBottom: '1rem', border: '1px solid #e2e8f0' }}>
                     <h4 style={{ margin: '0 0 1rem 0', color: '#334155', fontSize: '0.95rem', fontWeight: '600' }}>
-                        {lang === 'cn' ? '负荷详情 (Load Profile)' : 'Load Details'}
+                        {['commercial_pv', 'commercial_ess'].includes(selectedScenario)
+                            ? (lang === 'cn' ? '变压器情况 (Transformer Info)' : 'Transformer Information')
+                            : (lang === 'cn' ? '负荷详情 (Load Profile)' : 'Load Details')
+                        }
                     </h4>
                     <div className="form-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                         <div className="form-group">
                             <label style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', marginBottom: '0.25rem' }}>
-                                {lang === 'cn' ? '月均用电量 (kWh)' : 'Monthly Consumption (kWh)'}
+                                {['commercial_pv', 'commercial_ess'].includes(selectedScenario)
+                                    ? (lang === 'cn' ? '变压器容量 (kVA)' : 'Transformer Capacity (kVA)')
+                                    : (lang === 'cn' ? '月均用电量 (kWh)' : 'Monthly Consumption (kWh)')
+                                }
                             </label>
                             <input
                                 type="number"
                                 step="1"
-                                value={formData.dailyConsumption ? Math.round(formData.dailyConsumption * 30) : ''}
-                                onChange={(e) => setFormData(prev => ({ ...prev, dailyConsumption: e.target.value / 30 }))}
-                                placeholder="e.g. 500"
+                                // If C&I, map to transformer_cap in scenarioData, else dailyConsumption
+                                value={['commercial_pv', 'commercial_ess'].includes(selectedScenario)
+                                    ? (formData.scenarioData?.transformer_cap || '')
+                                    : (formData.dailyConsumption ? Math.round(formData.dailyConsumption * 30) : '')
+                                }
+                                onChange={(e) => {
+                                    if (['commercial_pv', 'commercial_ess'].includes(selectedScenario)) {
+                                        handleScenarioDataChange('transformer_cap', e.target.value);
+                                    } else {
+                                        setFormData(prev => ({ ...prev, dailyConsumption: e.target.value / 30 }));
+                                    }
+                                }}
+                                placeholder={['commercial_pv', 'commercial_ess'].includes(selectedScenario) ? "e.g. 800" : "e.g. 500"}
                                 style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
                             />
                         </div>
                         <div className="form-group">
                             <label style={{ display: 'block', fontSize: '0.85rem', color: '#64748b', marginBottom: '0.25rem' }}>
-                                {lang === 'cn' ? '峰值功率 (kW)' : 'Peak Load (kW)'}
+                                {['commercial_pv', 'commercial_ess'].includes(selectedScenario)
+                                    ? (lang === 'cn' ? '并网电压等级' : 'Grid Voltage Level')
+                                    : (lang === 'cn' ? '峰值功率 (kW)' : 'Peak Load (kW)')
+                                }
                             </label>
-                            <input
-                                type="number"
-                                onChange={(e) => handleScenarioDataChange('peak_load_kw', e.target.value)}
-                                placeholder="e.g. 5"
-                                style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
-                            />
+                            {['commercial_pv', 'commercial_ess'].includes(selectedScenario) ? (
+                                <select
+                                    onChange={(e) => handleScenarioDataChange('grid_voltage', e.target.value)}
+                                    style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                                >
+                                    <option value="380V">380V (Low Voltage)</option>
+                                    <option value="10kV">10kV (High Voltage)</option>
+                                    <option value="35kV">35kV</option>
+                                </select>
+                            ) : (
+                                <input
+                                    type="number"
+                                    onChange={(e) => handleScenarioDataChange('peak_load_kw', e.target.value)}
+                                    placeholder="e.g. 5"
+                                    style={{ width: '100%', padding: '0.5rem', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
@@ -222,14 +251,37 @@ const InputForm = ({ onGenerate }) => {
                     />
                     <div style={{ marginTop: '1rem', padding: '1rem', background: '#fffbeb', borderRadius: '8px', border: '1px solid #fcd34d' }}>
                         <h5 style={{ margin: '0 0 0.5rem 0', color: '#b45309', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                            ⚠️ {lang === 'cn' ? '户用注意事项' : 'Installation Tips'}
+                            ⚠️ {['commercial_pv', 'commercial_ess'].includes(selectedScenario)
+                                ? (lang === 'cn' ? '工商业系统注意事项' : 'C&I System Precautions')
+                                : (lang === 'cn' ? '户用注意事项' : 'Installation Tips')
+                            }
                         </h5>
                         <ul style={{ paddingLeft: '1.2rem', margin: 0, fontSize: '0.8rem', color: '#92400e', lineHeight: '1.4' }}>
-                            <li>{lang === 'cn' ? '屋顶承重：需确认结构牢固' : 'Roof Load: Ensure stability'}</li>
-                            <li>{lang === 'cn' ? '防水检查：避免破坏原有防水层' : 'Waterproof: Protect roof layer'}</li>
-                            <li>{lang === 'cn' ? '遮挡分析：避开女儿墙/树木' : 'Shading: Avoid trees/walls'}</li>
-                            <li>{lang === 'cn' ? '朝向选择：正南向发电效率最高' : 'Orientation: South is optimal'}</li>
-                            <li>{lang === 'cn' ? '电网规范：需当地电力局审批' : 'Permits: Check local grid codes'}</li>
+                            {selectedScenario === 'commercial_pv' && (
+                                <>
+                                    <li>{lang === 'cn' ? '变压器：确认容量余量充足' : 'Transformer: Check capacity margin'}</li>
+                                    <li>{lang === 'cn' ? '屋顶荷载：彩钢瓦/混凝土承重校验' : 'Roof Load: Check structural bearing'}</li>
+                                    <li>{lang === 'cn' ? '并网点：确认低压/高压接入方案' : 'Grid Point: Confirm LV/HV connection'}</li>
+                                    <li>{lang === 'cn' ? '消纳分析：评估自发自用比例' : 'Consumption: Analyze self-use ratio'}</li>
+                                </>
+                            )}
+                            {selectedScenario === 'commercial_ess' && (
+                                <>
+                                    <li>{lang === 'cn' ? '峰谷价差：建议价差>0.7元/kWh' : 'Price Gap: Recommended gap > 0.7 RMB'}</li>
+                                    <li>{lang === 'cn' ? '变压器：需预留充电功率余量' : 'Transformer: Reserve charging capacity'}</li>
+                                    <li>{lang === 'cn' ? '场地要求：需满足电池消防间距' : 'Site: Meet fire safety distances'}</li>
+                                    <li>{lang === 'cn' ? '充放策略：建议两充两放模式' : 'Strategy: 2 cycles/day recommended'}</li>
+                                </>
+                            )}
+                            {!['commercial_pv', 'commercial_ess'].includes(selectedScenario) && (
+                                <>
+                                    <li>{lang === 'cn' ? '屋顶承重：需确认结构牢固' : 'Roof Load: Ensure stability'}</li>
+                                    <li>{lang === 'cn' ? '防水检查：避免破坏原有防水层' : 'Waterproof: Protect roof layer'}</li>
+                                    <li>{lang === 'cn' ? '遮挡分析：避开女儿墙/树木' : 'Shading: Avoid trees/walls'}</li>
+                                    <li>{lang === 'cn' ? '朝向选择：正南向发电效率最高' : 'Orientation: South is optimal'}</li>
+                                    <li>{lang === 'cn' ? '电网规范：需当地电力局审批' : 'Permits: Check local grid codes'}</li>
+                                </>
+                            )}
                         </ul>
                     </div>
                 </div>

@@ -552,7 +552,8 @@ export const calculateSystem = (inputs) => {
         };
     };
 
-    const stringDesign = calculateStringDesign();
+    // String Design calculation moved to after Integer Snapping
+    // const stringDesign = calculateStringDesign();
 
     // --- Logistics & Shipping Estimation ---
     const estVolume = (reqPVKw * 1.5) + (reqBatKwh * 0.1) + 1.0;
@@ -603,6 +604,12 @@ export const calculateSystem = (inputs) => {
     }
 
     // ----------------------------------------------------------------
+    // 5.1 Re-Calculate String Design with Final Capacity
+    // ----------------------------------------------------------------
+    // Now that reqPVKw is snapped to exact panel count, calculate strings.
+    const stringDesign = calculateStringDesign();
+
+    // ----------------------------------------------------------------
     // 6. Final NaN Barrier (Absolute Safety)
     // ----------------------------------------------------------------
     if (isNaN(reqPVKw)) reqPVKw = 0;
@@ -651,7 +658,7 @@ export const calculateSystem = (inputs) => {
             npc: npc.toFixed(0)
         },
         logistics: logistics, // New Logistics Data
-        products: res // Product Selection Data
+        products: res // Return the full products object with counts
     };
 };
 

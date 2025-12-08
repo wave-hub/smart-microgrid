@@ -65,16 +65,7 @@ export const scenarioQuestions = {
             ]
         },
         // Reuse Load Profile for proper sizing
-        {
-            id: 'micro_load',
-            textCN: '负荷详情 (Load Profile)',
-            textEN: 'Load Details',
-            fields: [
-                { id: 'monthly_avg_kwh', labelCN: '月均用电量', labelEN: 'Monthly kWh', type: 'number', unit: 'kWh' },
-                { id: 'peak_load_kw', labelCN: '峰值功率', labelEN: 'Peak Load', type: 'number', unit: 'kW' },
-                { id: 'transformer_cap', labelCN: '变压器容量', labelEN: 'Transformer Cap', type: 'number', unit: 'kVA' }
-            ]
-        },
+        // Load Profile handled by main form section
         // Optional: Add Roof Info if they want PV
         {
             id: 'pv_spec',
